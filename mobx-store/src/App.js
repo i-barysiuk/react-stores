@@ -1,7 +1,7 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { observable, computed, observer, mobx } from "mobx"
+import { observable, computed, autorun } from "mobx"
+import {observer} from 'mobx-react'
 
 import shortid from 'shortid';
 
@@ -10,7 +10,7 @@ class ObservableTodoStore {
     @observable pendingRequests = 0;
 
     constructor() {
-        mobx.autorun(() => console.log(this.report));
+        autorun(() => console.log(this.report));
     }
 
     @computed get completedTodosCount() {
@@ -48,7 +48,7 @@ class TodoList extends React.Component {
         { store.report }
         <ul>
         { store.todos.map(
-          (todo, idx) => <TodoView todo={ todo } key={ todo.id } />
+          (todo, id) => <TodoView todo={ todo } key={ todo.id } />
         ) }
         </ul>
         { store.pendingRequests > 0 ? <marquee>Loading...</marquee> : null }
@@ -64,7 +64,7 @@ class TodoList extends React.Component {
   } 
 }
 
-
+@observer
 class TodoView extends React.Component {
   render() {
     const todo = this.props.todo;
@@ -76,10 +76,6 @@ class TodoView extends React.Component {
           onChange={ this.onToggleCompleted } 
         />
         { todo.task }
-        { todo.assignee 
-          ? <small>{ todo.assignee.name }</small> 
-          : null
-        }
         {/* <RenderCounter /> */}
       </li>
     ); 
